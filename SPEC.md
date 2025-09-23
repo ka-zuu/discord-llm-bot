@@ -20,8 +20,7 @@ Pythonで動作する多機能Discordボットを開発する。このボット�
     -   `discord.py`: Discord API連携
     -   `fastapi`: Web APIサーバー構築
     -   `uvicorn`: ASGIサーバー
-    -   `llm`: LLM（Gemini）連携用ライブラリ
-    -   `llm-gemini`: `llm`ライブラリのGeminiプラグイン
+    -   `google-generativeai`: Google Gemini API連携
     -   `PyYAML`: 設定ファイルの読み込み
 
 ---
@@ -52,7 +51,7 @@ Pythonで動作する多機能Discordボットを開発する。このボット�
 ```yaml
 # DiscordとLLMの認証情報
 discord_token: "YOUR_DISCORD_BOT_TOKEN"
-# Gemini APIキーはllmライブラリの作法に従い、環境変数(GEMINI_API_KEY)で設定すること。
+# Gemini APIキーは環境変数(GEMINI_API_KEY)で設定すること。
 
 # APIサーバーの設定
 api_server:
@@ -84,7 +83,7 @@ LLMとのやり取りを抽象化する。
 - **`async def generate_response(history: list, system_prompt: str) -> str`** 関数を実装する。
   - `history`: `[{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]` 形式の会話履歴リスト。
   - `system_prompt`: `config.yaml`から読み込んだキャラクター設定。
-  - 処理内容: `llm`ライブラリを使い、`gemini-2.5-flash-latest`などのモデルに対して、システムプロンプトと会話履歴を渡して応答テキストを生成・返却する。
+  - 処理内容: `google-generativeai`ライブラリを使い、`gemini-2.5-flash-latest`などのモデルに対して、システムプロンプトと会話履歴を渡して応答テキストを生成・返却する。
 
 ### 4.4. Discordボット (`discord_bot.py`)
 
