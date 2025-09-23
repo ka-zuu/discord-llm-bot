@@ -1,0 +1,10 @@
+# テスト用の設定ファイル
+api_server:
+  api_key: "test-api-key-123"
+  default_notify_channel_id: 123456789012345678
+
+bot_persona:
+  model: "gemini-test-model"
+  system_prompt: "あなたはテスト用のアシスタントです。"
+
+gemini_api_key: "dummy-gemini-key"
