@@ -63,9 +63,9 @@ def create_api_server(client: discord.Client):
                 logger.error(f"チャンネルが見つかりません: {channel_id}")
                 raise HTTPException(status_code=404, detail=f"Channel with ID {channel_id} not found")
 
-            await channel.send(notification_message)
-            logger.info(f"チャンネルID {channel_id} に通知を送信しました。")
-            return {"status": "ok", "message": "通知を送信しました"}
+            client.loop.create_task(channel.send(notification_message))
+            logger.info(f"チャンネルID {channel_id} への通知をスケジュールしました。")
+            return {"status": "ok", "message": "通知をスケジュールしました"}
         except HTTPException as e:
             raise e
         except Exception as e:
