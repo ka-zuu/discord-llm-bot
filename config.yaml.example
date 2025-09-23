@@ -2,8 +2,9 @@
 # Discordボットのトークンをここに設定します
 discord_token: "YOUR_DISCORD_BOT_TOKEN"
 
-# Gemini APIキーは環境変数 `GEMINI_API_KEY` で設定してください
-# 例: export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+# Gemini APIキーをここに設定します
+gemini_api_key: "YOUR_GEMINI_API_KEY"
+
 
 # APIサーバーの設定
 api_server:

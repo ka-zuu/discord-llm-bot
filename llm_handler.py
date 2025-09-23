@@ -1,4 +1,3 @@
-import os
 import logging
 import google.generativeai as genai
 from config import load_config
@@ -6,11 +5,11 @@ from config import load_config
 logger = logging.getLogger(__name__)
 config = load_config()
 
-# 環境変数からAPIキーを設定
-api_key = os.getenv("GEMINI_API_KEY")
+# 設定ファイルからAPIキーを設定
+api_key = config.get("gemini_api_key")
 if not api_key:
-    logger.error("GEMINI_API_KEYが環境変数に設定されていません。")
-    raise ValueError("GEMINI_API_KEYが環境変数に設定されていません。")
+    logger.error("gemini_api_keyが設定ファイルに設定されていません。")
+    raise ValueError("gemini_api_keyが設定ファイルに設定されていません。")
 
 genai.configure(api_key=api_key)
 
