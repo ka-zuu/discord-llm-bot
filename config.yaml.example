@@ -1,0 +1,27 @@
+# DiscordとLLMの認証情報
+# Discordボットのトークンをここに設定します
+discord_token: "YOUR_DISCORD_BOT_TOKEN"
+
+# Gemini APIキーは環境変数 `GEMINI_API_KEY` で設定してください
+# 例: export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+
+# APIサーバーの設定
+api_server:
+  host: "0.0.0.0"
+  port: 8080
+  # 外部連携APIの認証用キー (例: "strong-secret-key")
+  api_key: "YOUR_SECRET_API_KEY"
+  # /notifyエンドポイントでチャンネルIDが指定されなかった場合のデフォルト通知先
+  default_notify_channel_id: 123456789012345678
+
+# ボットのキャラクター設定
+bot_persona:
+  # ボットの名前 (ログ出力などで使用)
+  name: "AIアシスタント"
+  # 使用するGeminiのモデル
+  model: "gemini-1.5-flash-latest"
+  # ボットの役割や口調を定義するシステムプロンプト
+  system_prompt: |
+    あなたは親切で知識豊富なAIアシスタントです。
+    ユーザーからの質問には、常に丁寧かつ分かりやすく回答してください。
+    不明な点については、正直に「分かりません」と答えてください。
