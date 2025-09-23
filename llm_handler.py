@@ -13,21 +13,14 @@ if not api_key:
 
 genai.configure(api_key=api_key)
 
-# GenerativeModelのインスタンスをキャッシュするための辞書
-_model_cache = {}
-
 def get_model(model_name: str, system_prompt: str) -> genai.GenerativeModel:
     """
-    モデル名とシステムプロンプトに基づいて、キャッシュされたGenerativeModelインスタンスを取得します。
-    キャッシュにない場合は新しいインスタンスを作成してキャッシュに追加します。
+    モデル名とシステムプロンプトに基づいて、GenerativeModelインスタンスを生成します。
+    この実装では、呼び出されるたびに新しいインスタンスが作成され、
+    異なるイベントループ間でインスタンスが共有されることによる問題を回避します。
     """
-    cache_key = (model_name, system_prompt)
-    if cache_key not in _model_cache:
-        logger.info(f"新しいGenerativeModelインスタンスを作成します: model={model_name}")
-        _model_cache[cache_key] = genai.GenerativeModel(
-            model_name, system_instruction=system_prompt
-        )
-    return _model_cache[cache_key]
+    logger.info(f"新しいGenerativeModelインスタンスを作成します: model={model_name}")
+    return genai.GenerativeModel(model_name, system_instruction=system_prompt)
 
 async def generate_response(history: list, system_prompt: str) -> str:
     """

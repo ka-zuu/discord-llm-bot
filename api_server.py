@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.security import APIKeyHeader
 import discord
 import logging
+import asyncio
 from pydantic import BaseModel
 from config import load_config
 from llm_handler import generate_response
@@ -65,7 +66,10 @@ def create_api_server(client: discord.Client):
                 logger.error(f"チャンネルが見つかりません: {channel_id}")
                 raise HTTPException(status_code=404, detail=f"Channel with ID {channel_id} not found")
 
-            client.loop.create_task(channel.send(notification_message))
+            # discord.pyのAPI呼び出しは、FastAPIのイベントループから直接行うのではなく、
+            # clientのイベントループで実行するようにスケジュールする必要があります。
+            # これにより、スレッドセーフティとループ間の競合が保証されます。
+            asyncio.run_coroutine_threadsafe(channel.send(notification_message), client.loop)
             logger.info(f"チャンネルID {channel_id} への通知をスケジュールしました。")
             return {"status": "ok", "message": "通知をスケジュールしました"}
         except HTTPException as e:
