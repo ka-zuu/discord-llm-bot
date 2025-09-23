@@ -47,7 +47,9 @@ def create_api_server(client: discord.Client):
     @app.post("/notify", dependencies=[Depends(get_api_key)])
     async def notify(request: NotifyRequest):
         logger.info(f"/notifyエンドポイントへのリクエスト: {request.prompt}")
-        system_prompt = "あなたは通知アシスタントです。以下の情報を基に、簡潔で分かりやすい通知メッセージを作成してください。"
+        persona_prompt = config.get("bot_persona", {}).get("system_prompt", "")
+        task_instruction = "以下の情報に基づいて、ユーザーに通知するためのメッセージを作成してください。"
+        system_prompt = f"{persona_prompt}\n\n{task_instruction}"
         history = [{"role": "user", "content": request.prompt}]
         
         try:
