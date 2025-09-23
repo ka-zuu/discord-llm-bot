@@ -1,5 +1,7 @@
 
 from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 import discord
 import logging
@@ -31,6 +33,32 @@ class NotifyRequest(BaseModel):
 
 def create_api_server(client: discord.Client):
     app = FastAPI()
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        """Log request headers and raw body when Pydantic validation fails (HTTP 422).
+
+        WARNING: This will log request bodies including potentially sensitive values
+        such as API keys. In production consider masking or limiting this logging.
+        """
+        try:
+            raw = await request.body()
+            body_text = raw.decode("utf-8", errors="replace")
+        except Exception as e:
+            body_text = f"<could not read body: {e}>"
+
+        # Collect headers and mask API key if present
+        hdrs = dict(request.headers)
+        api_key_header = None
+        for k in list(hdrs.keys()):
+            if k.lower() == "x-api-key":
+                api_key_header = k
+                break
+        if api_key_header:
+            hdrs[api_key_header] = "***MASKED***"
+
+        logger.error(f"Request validation error: {exc.errors()}, headers={hdrs}, body={body_text}")
+        return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
     @app.post("/chat", dependencies=[Depends(get_api_key)])
     async def chat(request: ChatRequest):

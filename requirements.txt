@@ -3,3 +3,6 @@ fastapi
 uvicorn
 google-generativeai
 PyYAML
+pytest
+httpx
+pytest-asyncio
