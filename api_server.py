@@ -77,7 +77,7 @@ def create_api_server(client: discord.Client):
     async def notify(request: NotifyRequest):
         logger.info(f"/notifyエンドポイントへのリクエスト: {request.prompt}")
         persona_prompt = config.get("bot_persona", {}).get("system_prompt", "")
-        task_instruction = "以下の情報に基づいて、ユーザーに通知するためのメッセージを作成してください。"
+        task_instruction = "以下の情報のみを使用して、通知メッセージの本文だけを生成してください。他のテキスト（挨拶、追加の解説など）は一切含めないでください。"
         system_prompt = f"{persona_prompt}\n\n{task_instruction}"
         history = [{"role": "user", "content": request.prompt}]
         
