@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport, ASGITransport
 from unittest.mock import MagicMock, AsyncMock, patch
 
 # api_server.pyをインポートするために、プロジェクトのルートをパスに追加する必要がある場合があります。
@@ -25,8 +25,7 @@ def app():
 
 @pytest.mark.asyncio
 async def test_chat_unauthorized(app):
-    """不正なAPIキーでのリクエストが拒否されることをテストします。"""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.post("/chat", json={"message": "hello"}, headers={"X-API-Key": "wrong-key"})
         assert response.status_code == 401
         assert response.json() == {"detail": "Invalid API Key"}
@@ -39,7 +38,7 @@ async def test_chat_success(app, monkeypatch):
     mock_llm = AsyncMock(return_value="This is a test response.")
     monkeypatch.setattr("api_server.generate_response", mock_llm)
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.post(
             "/chat",
             json={"message": "hello"},
@@ -53,7 +52,7 @@ async def test_chat_success(app, monkeypatch):
 @pytest.mark.asyncio
 async def test_chat_invalid_payload(app):
     """不正なペイロードでのリクエストがエラーになることをテストします。"""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.post(
             "/chat",
             json={"wrong_field": "hello"},  # 'message' フィールドがありません
