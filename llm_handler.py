@@ -1,5 +1,6 @@
 import logging
 import google.generativeai as genai
+import asyncio
 from config import load_config
 
 logger = logging.getLogger(__name__)
@@ -47,7 +48,10 @@ async def generate_response(history: list, system_prompt: str) -> str:
             logger.warning("会話履歴が空の状態でgenerate_responseが呼ばれました。")
             return "エラー: 会話履歴が空です。"
         
-        response = await model.generate_content_async(api_history)
+        response = await asyncio.to_thread(
+            model.generate_content,
+            api_history
+        )
         return response.text
     except Exception as e:
         logger.error(f"LLM APIエラー: {e}", exc_info=True)
